@@ -20,19 +20,17 @@ def video_elements(request, video_filename):
 def video_iframe_detail(request, video_filename):
     """Returns JSON-encoded data showing details of all the I-frames in a video."""
     try:
-        probe = ffmpeg.probe(f"videos/static/videos/{video_filename}")
+        # Output returned by ffprobe as JSON for the specified file.
+        ffprobe_output = ffmpeg.probe(f"videos/static/videos/{video_filename}", show_frames=None)
     except ffmpeg.Error as e:
-        return HttpResponse(f"An error occurred while using ffprobe with {video_filename}:<br>{e.stderr}")
+        return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
 
-    video_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'video'), None)
-    width = int(video_stream['width'])
-    height = int(video_stream['height'])
+    video_frames = [frame for frame in ffprobe_output['frames'] if frame['pict_type'] == 'I']
+    if video_frames.count == 0:
+        return HttpResponse(f"No I-Frames were found ffprobe on {video_filename}")
 
-    response_data = {}
-    response_data['video_filename'] = width
-    response_data['ffprobe_response'] = height
-
-    return JsonResponse(response_data, json_dumps_params={'indent': 4})
+    # Return the list of I-Frames as JSON. The safe=False argument allows JsonResponse to parse a list.
+    return JsonResponse(video_frames, json_dumps_params={'indent': 4}, safe=False)
 
 def group_of_of_pictures_video(request, video_filename, group_of_pictures_index):
     """Returns an MP4 file containing the video data for the group of pictures requested (zero-indexed)."""
