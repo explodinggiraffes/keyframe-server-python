@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>Video Keyframe Server - Video for Group Index {{ group_of_pictures_index }} </title>
+  </head>
+  <body>
+    <p>This is a page with a video created from: {{ video_pathname }}</p>
+    <p>
+      {% load static %}
+      <video controls>
+        <source src="{% static video_pathname %}" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </p>
+    <p>
+      <video controls>
+        <source src="{% static output_filename %}" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </p>
+  </body>
+</html>
