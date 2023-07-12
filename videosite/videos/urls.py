@@ -2,6 +2,7 @@ from django.urls import path
 
 from . import views
 
+
 urlpatterns = [
     # Endpoint returning an HTML page detailing the Video Keyframe Server endpoints.
     # Example: http://127.0.0.1:8000/videos/
