@@ -23,9 +23,9 @@ def video_elements(request, video_filename):
 
 def video_iframe_detail(request, video_filename):
     """Returns JSON-encoded data showing details of all the I-frames in a video."""
+    video_pathname = f"{str(settings.VIDEOS_STATIC_ROOT)}/{video_filename}"
     try:
         # Output returned by ffprobe as JSON for the specified file.
-        video_pathname = f"{str(settings.VIDEOS_STATIC_ROOT)}/{video_filename}"
         ffprobe_output = ffmpeg.probe(video_pathname, show_frames=None)
     except ffmpeg.Error as e:
         return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
