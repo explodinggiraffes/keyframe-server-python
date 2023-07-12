@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render
 
+from django.conf import settings
+
 import ffmpeg
 
 
@@ -14,14 +16,17 @@ def video_elements(request, video_filename):
     """Returns an HTML page containing a grid of all the groups of pictures in playable <video> elements and their
     timestamps.
     """
-    context = {"video_filename": video_filename}
+    context = {
+        video_filename: video_filename
+    }
     return render(request, "videos/video_elements.html", context)
 
 def video_iframe_detail(request, video_filename):
     """Returns JSON-encoded data showing details of all the I-frames in a video."""
     try:
         # Output returned by ffprobe as JSON for the specified file.
-        ffprobe_output = ffmpeg.probe(f"videos/static/videos/{video_filename}", show_frames=None)
+        video_pathname = f"{str(settings.VIDEOS_STATIC_ROOT)}/{video_filename}"
+        ffprobe_output = ffmpeg.probe(video_pathname, show_frames=None)
     except ffmpeg.Error as e:
         return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
 
@@ -34,7 +39,29 @@ def video_iframe_detail(request, video_filename):
 
 def group_of_of_pictures_video(request, video_filename, group_of_pictures_index):
     """Returns an MP4 file containing the video data for the group of pictures requested (zero-indexed)."""
-    pass
+    video_pathname = f"{str(settings.VIDEOS_STATIC_ROOT)}/{video_filename}"
+    output_pathname = f"{str(settings.VIDEOS_MEDIA_ROOT)}/{video_filename}"
+    try:
+        (
+            ffmpeg
+            .input(video_pathname)
+            .trim(start_frame=0, end_frame=86)
+            .output(output_pathname)
+            .overwrite_output()
+            .run()
+        )
+    except ffmpeg.Error as e:
+        return HttpResponse(f"An error occurred while using ffmpeg on {video_filename}:<br>{e.stderr}")
+
+    template_video_pathname = f"videos/{video_filename}"
+    template_output_pathname = f"videos/media/{video_filename}"
+    context = {
+        'group_of_pictures_index': group_of_pictures_index,
+        'output_filename': template_output_pathname,
+        'video_pathname': template_video_pathname
+    }
+    print(context)
+    return render(request, "videos/group_of_of_pictures_video.html", context)
 
 def custom_page_not_found_view(request, exception):
     response = render(request, "videos/index.html")
