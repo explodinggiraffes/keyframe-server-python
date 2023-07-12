@@ -1,3 +1,6 @@
 ## Visual Studio Code and JetBrains IDE artifacts
 .vscode
 .idea
+
+## Temporary MP4 files created while using the videos app.
+videosite/videos/static/videos/media/
