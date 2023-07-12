@@ -118,7 +118,17 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Settings specific to the videos app.
+
+# Absolute path to the directory where the videos app MP4 static file(s) are located.
+VIDEOS_STATIC_ROOT = BASE_DIR / 'videos/static/videos/'
+
+# Absolute path to the directory where (temporary) MP4 video(s) that the videos app creates will be located.
+VIDEOS_MEDIA_ROOT = VIDEOS_STATIC_ROOT / 'media/'
