@@ -70,7 +70,6 @@ def group_of_of_pictures_video(request, video_filename, group_of_pictures_index)
 
     video_pathname = f"{str(settings.VIDEOS_STATIC_ROOT)}/{video_filename}"
     output_pathname = f"{str(settings.VIDEOS_MEDIA_ROOT)}/{time.time()}.{video_filename}"
-    print(output_pathname)
     try:
         (
             ffmpeg
