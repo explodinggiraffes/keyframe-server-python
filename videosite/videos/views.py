@@ -1,9 +1,10 @@
 """Views accepting an HTTP request and returning an HTTP response."""
+import time
+
+from django.conf import settings
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render
-
-from django.conf import settings
 
 import ffmpeg
 
@@ -68,7 +69,8 @@ def group_of_of_pictures_video(request, video_filename, group_of_pictures_index)
             return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
 
     video_pathname = f"{str(settings.VIDEOS_STATIC_ROOT)}/{video_filename}"
-    output_pathname = f"{str(settings.VIDEOS_MEDIA_ROOT)}/{video_filename}"
+    output_pathname = f"{str(settings.VIDEOS_MEDIA_ROOT)}/{time.time()}.{video_filename}"
+    print(output_pathname)
     try:
         (
             ffmpeg
