@@ -5,6 +5,26 @@
     <title>Video Keyframe Server - Videos</title>
   </head>
   <body>
-    <p>This will be a page with video elements on it for MP4 file: {{ video_filename }}</p>
+    <p>
+      <table>
+        {% for video_data in group_of_pictures_tuple %}
+          {% if video_data.display_group_begin %}
+            <tr>
+          {% endif %}
+          <td>
+            <b>Group {{ video_data.display_index }}</b><br>
+            Timestamp will go here<br>
+            {% load static %}
+            <video controls>
+              <source src="{% static output_pathname %}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            {% if video_data.display_group_end %}
+              </tr>
+            {% endif %}
+          </td>
+        {% endfor %}
+      </p>
+    </table>
   </body>
 </html>
