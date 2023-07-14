@@ -45,11 +45,36 @@ def video_elements(request, video_filename):
             except ffmpeg.Error as e:
                 return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
 
+        output_pathname = f"{str(settings.VIDEOS_MEDIA_ROOT)}/video_elements.{time.time()}.{video_filename}"
+        try:
+            (
+                ffmpeg
+                .input(video_pathname)
+                .trim(start_frame=start_frame, end_frame=end_frame)
+                .output(output_pathname)
+                .overwrite_output()
+                .run()
+            )
+        except ffmpeg.Error as e:
+            return HttpResponse(f"An error occurred while using ffmpeg on {video_filename}:<br>{e.stderr}")
+
+        timestamp_begin = video_frames[group_of_pictures_index]['best_effort_timestamp_time']
+        if group_of_pictures_index < (number_of_video_frames - 1):
+            timestamp_end = video_frames[group_of_pictures_index + 1]['best_effort_timestamp_time']
+        else:
+            timestamp_end = "end"
+
         display_index = group_of_pictures_index + 1
+        display_group_begin = True if display_index % 6 == 1 else False
+        display_group_end = True if display_index % 6 == 0 else False
+
         group_of_pictures_list.append({
+            'display_group_begin': display_group_begin,
+            'display_group_end': display_group_end,
             'display_index': display_index,
-            'display_group_begin': True if display_index % 6 == 1 else False,
-            'display_group_end': True if display_index % 6 == 0 else False
+            'output_pathname': output_pathname,
+            'timestamp_begin': timestamp_begin,
+            'timestamp_end': timestamp_end
         })
 
         group_of_pictures_index += 1
@@ -83,7 +108,6 @@ def video_iframe_detail(request, video_filename):
 # TODO: Refactor
 def group_of_of_pictures_video(request, video_filename, group_of_pictures_index):
     """Returns an MP4 file containing the video data for the group of pictures requested (zero-indexed)."""
-
     video_pathname = f"{str(settings.VIDEOS_STATIC_ROOT)}/{video_filename}"
     try:
         # Output returned by ffprobe as JSON for the specified file.
@@ -109,7 +133,6 @@ def group_of_of_pictures_video(request, video_filename, group_of_pictures_index)
         except ffmpeg.Error as e:
             return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
 
-    video_pathname = f"{str(settings.VIDEOS_STATIC_ROOT)}/{video_filename}"
     output_pathname = f"{str(settings.VIDEOS_MEDIA_ROOT)}/group_of_of_pictures_video.{time.time()}.{video_filename}"
     try:
         (
@@ -128,6 +151,7 @@ def group_of_of_pictures_video(request, video_filename, group_of_pictures_index)
         'group_of_pictures_index': group_of_pictures_index,
         'output_pathname': template_output_pathname
     }
+
     return render(request, "videos/group_of_of_pictures_video.html", context)
 
 def custom_page_not_found_view(request, exception):

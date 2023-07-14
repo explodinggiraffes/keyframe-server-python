@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en-US">
   <head>
@@ -13,10 +14,9 @@
           {% endif %}
           <td>
             <b>Group {{ video_data.display_index }}</b><br>
-            Timestamp will go here<br>
-            {% load static %}
+            From {{ video_data.timestamp_begin }} to {{ video_data.timestamp_end }}<br>
             <video controls>
-              <source src="{% static output_pathname %}" type="video/mp4">
+              <source src="{% static video_data.output_pathname %}" type="video/mp4">
               Your browser does not support the video tag.
             </video>
             {% if video_data.display_group_end %}
