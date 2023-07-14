@@ -28,6 +28,30 @@ def iframes(video_pathname) -> list[str: Any]:
     frames = [frame for frame in ffprobe_all_frames['frames'] if frame['pict_type'] == 'I']
     return frames
 
+def trim(video_pathname, output_pathname, start_frame, end_frame) -> None:
+    """Trims the specified video file, using the supplied beginning and ending frame numbers. A new file is created,
+    using the name of the supplied output file pathname.
+
+    If a file with the supplied output pathname already exists it will be overwitten.
+
+    Args:
+      video_pathname: The pathname of the file on which ffprobe will operate.
+      output_pathname: The new video file.
+      start_frame: The first frame in the existing video that will be included in the new one.
+      start_frame: The last frame in the existing video that will be included in the new one.
+
+    Raises:
+      ffmpeg.Error
+    """
+    (
+        ffmpeg
+        .input(video_pathname)
+        .trim(start_frame=start_frame, end_frame=end_frame)
+        .output(output_pathname)
+        .overwrite_output()
+        .run()
+    )
+
 def index(request):
     """Returns an HTML page detailing the Video Keyframe Server endpoints."""
     return render(request, "videos/index.html")
@@ -63,14 +87,7 @@ def video_elements(request, video_filename):
 
         output_pathname = f"{str(settings.VIDEOS_MEDIA_ROOT)}/video_elements.{time.time()}.{video_filename}"
         try:
-            (
-                ffmpeg
-                .input(video_pathname)
-                .trim(start_frame=start_frame, end_frame=end_frame)
-                .output(output_pathname)
-                .overwrite_output()
-                .run()
-            )
+            trim(video_pathname, output_pathname, start_frame, end_frame)
         except ffmpeg.Error as e:
             return HttpResponse(f"An error occurred while using ffmpeg on {video_filename}:<br>{e.stderr}")
 
@@ -143,14 +160,7 @@ def group_of_of_pictures_video(request, video_filename, group_of_pictures_index)
 
     output_pathname = f"{str(settings.VIDEOS_MEDIA_ROOT)}/group_of_of_pictures_video.{time.time()}.{video_filename}"
     try:
-        (
-            ffmpeg
-            .input(video_pathname)
-            .trim(start_frame=start_frame, end_frame=end_frame)
-            .output(output_pathname)
-            .overwrite_output()
-            .run()
-        )
+        trim(video_pathname, output_pathname, start_frame, end_frame)
     except ffmpeg.Error as e:
         return HttpResponse(f"An error occurred while using ffmpeg on {video_filename}:<br>{e.stderr}")
 
