@@ -17,13 +17,16 @@ def group_of_pictures_frame_span(iframes, group_of_pictures_index, video_pathnam
       video_pathname: The pathname of the file used if we need to obtain the number of frames for the entire video.
 
     Raises:
-      ffmpeg.Error
+      RuntimeError
     """
     start_frame = iframes[group_of_pictures_index]['coded_picture_number']
     if group_of_pictures_index < (len(iframes) - 1):
         end_frame = iframes[group_of_pictures_index + 1]['coded_picture_number'] - 1
     else:
-        ffprobe_frames_nbr_as_json = ffmpeg.probe(video_pathname, count_frames=None, show_entries="stream=nb_read_frames")
+        try:
+          ffprobe_frames_nbr_as_json = ffmpeg.probe(video_pathname, count_frames=None, show_entries="stream=nb_read_frames")
+        except ffmpeg.Error as e:
+          raise RuntimeError(e.stderr)
         streams = ffprobe_frames_nbr_as_json['streams']
         end_frame = streams[0]['nb_read_frames']
 
@@ -44,9 +47,12 @@ def iframes(video_pathname) -> list[str: Any]:
       A list of I-Frame data.
 
     Raises:
-      ffmpeg.Error
+      RuntimeError
     """
-    ffprobe_all_frames = ffmpeg.probe(video_pathname, show_frames=None)
+    try:
+      ffprobe_all_frames = ffmpeg.probe(video_pathname, show_frames=None)
+    except ffmpeg.Error as e:
+      raise RuntimeError(e.stderr)
     iframes = [frame for frame in ffprobe_all_frames['frames'] if frame['pict_type'] == 'I']
     return iframes
 
@@ -63,13 +69,16 @@ def trim(video_pathname, output_pathname, start_frame, end_frame) -> None:
       start_frame: The last frame in the existing video that will be included in the new one.
 
     Raises:
-      ffmpeg.Error
+      RuntimeError
     """
-    (
-        ffmpeg
-        .input(video_pathname)
-        .trim(start_frame=start_frame, end_frame=end_frame)
-        .output(output_pathname)
-        .overwrite_output()
-        .run()
-    )
+    try:
+      (
+          ffmpeg
+          .input(video_pathname)
+          .trim(start_frame=start_frame, end_frame=end_frame)
+          .output(output_pathname)
+          .overwrite_output()
+          .run()
+      )
+    except ffmpeg.Error as e:
+      raise RuntimeError(e.stderr)

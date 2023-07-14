@@ -7,8 +7,6 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render
 
-import ffmpeg
-
 import videos.videos_ffmpeg as videos_ffmpeg
 
 
@@ -23,8 +21,8 @@ def video_elements(request, video_filename):
     video_pathname = f"{str(settings.VIDEOS_STATIC_ROOT)}/{video_filename}"
     try:
         video_frames = videos_ffmpeg.iframes(video_pathname)
-    except ffmpeg.Error as e:
-        return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
+    except RuntimeError as e:
+        return HttpResponse(f"An error occurred getting I-Frames for {video_filename}:<br>{repr(e)}")
 
     number_of_video_frames = len(video_frames)
     if number_of_video_frames == 0:
@@ -36,14 +34,14 @@ def video_elements(request, video_filename):
     for frame in video_frames:
         try:
             frame_span = videos_ffmpeg.group_of_pictures_frame_span(video_frames, group_of_pictures_index, video_pathname)
-        except ffmpeg.Error as e:
-            return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
+        except RuntimeError as e:
+            return HttpResponse(f"An error occurred getting I-Frames for {video_filename}:<br>{repr(e)}")
 
         output_pathname = f"{str(settings.VIDEOS_MEDIA_ROOT)}/video_elements.{time.time()}.{video_filename}"
         try:
             videos_ffmpeg.trim(video_pathname, output_pathname, frame_span['start_frame'], frame_span['end_frame'])
-        except ffmpeg.Error as e:
-            return HttpResponse(f"An error occurred while using ffmpeg on {video_filename}:<br>{e.stderr}")
+        except RuntimeError as e:
+            return HttpResponse(f"An error occurred while processing {video_filename}:<br>{repr(e)}")
 
         timestamp_begin = video_frames[group_of_pictures_index]['best_effort_timestamp_time']
         if group_of_pictures_index < (number_of_video_frames - 1):
@@ -80,8 +78,8 @@ def video_iframe_detail(request, video_filename):
     video_pathname = f"{str(settings.VIDEOS_STATIC_ROOT)}/{video_filename}"
     try:
         video_frames = videos_ffmpeg.iframes(video_pathname)
-    except ffmpeg.Error as e:
-        return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
+    except RuntimeError as e:
+        return HttpResponse(f"An error occurred getting I-Frames for {video_filename}:<br>{repr(e)}")
     if len(video_frames) == 0:
         return HttpResponse(f"No I-Frames were found using ffprobe on {video_filename}")
 
@@ -93,8 +91,8 @@ def group_of_of_pictures_video(request, video_filename, group_of_pictures_index)
     video_pathname = f"{str(settings.VIDEOS_STATIC_ROOT)}/{video_filename}"
     try:
         video_frames = videos_ffmpeg.iframes(video_pathname)
-    except ffmpeg.Error as e:
-        return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
+    except RuntimeError as e:
+        return HttpResponse(f"An error occurred getting I-Frames for {video_filename}:<br>{repr(e)}")
 
     number_of_video_frames = len(video_frames)
     if number_of_video_frames == 0:
@@ -104,20 +102,18 @@ def group_of_of_pictures_video(request, video_filename, group_of_pictures_index)
 
     try:
         frame_span = videos_ffmpeg.group_of_pictures_frame_span(video_frames, group_of_pictures_index, video_pathname)
-    except ffmpeg.Error as e:
-        return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
+    except RuntimeError as e:
+        return HttpResponse(f"An error occurred getting I-Frames for {video_filename}:<br>{repr(e)}")
 
     output_pathname = f"{str(settings.VIDEOS_MEDIA_ROOT)}/group_of_of_pictures_video.{time.time()}.{video_filename}"
     try:
         videos_ffmpeg.trim(video_pathname, output_pathname, frame_span['start_frame'], frame_span['end_frame'])
-    except ffmpeg.Error as e:
-        return HttpResponse(f"An error occurred while using ffmpeg on {video_filename}:<br>{e.stderr}")
-
-    template_output_pathname = f"videos/media/{video_filename}"
+    except RuntimeError as e:
+        return HttpResponse(f"An error occurred while processing {video_filename}:<br>{repr(e)}")
 
     context = {
         'group_of_pictures_index': group_of_pictures_index,
-        'output_pathname': template_output_pathname
+        'output_pathname': output_pathname
     }
 
     return render(request, "videos/group_of_of_pictures_video.html", context)
