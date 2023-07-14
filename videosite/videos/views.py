@@ -21,11 +21,11 @@ def video_elements(request, video_filename):
     video_pathname = f"{str(settings.VIDEOS_STATIC_ROOT)}/{video_filename}"
     try:
         # Output returned by ffprobe as JSON for the specified file.
-        ffprobe_iframes_as_json = ffmpeg.probe(video_pathname, show_frames=None)
+        ffprobe_frames_as_json = ffmpeg.probe(video_pathname, show_frames=None)
     except ffmpeg.Error as e:
         return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
 
-    video_frames = [frame for frame in ffprobe_iframes_as_json['frames'] if frame['pict_type'] == 'I']
+    video_frames = [frame for frame in ffprobe_frames_as_json['frames'] if frame['pict_type'] == 'I']
     number_of_video_frames = len(video_frames)
     if number_of_video_frames == 0:
         return HttpResponse(f"No I-Frames were found using ffprobe on {video_filename}")
@@ -94,11 +94,11 @@ def video_iframe_detail(request, video_filename):
     video_pathname = f"{str(settings.VIDEOS_STATIC_ROOT)}/{video_filename}"
     try:
         # Output returned by ffprobe as JSON for the specified file.
-        ffprobe_iframes_as_json = ffmpeg.probe(video_pathname, show_frames=None)
+        ffprobe_frames_as_json = ffmpeg.probe(video_pathname, show_frames=None)
     except ffmpeg.Error as e:
         return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
 
-    video_frames = [frame for frame in ffprobe_iframes_as_json['frames'] if frame['pict_type'] == 'I']
+    video_frames = [frame for frame in ffprobe_frames_as_json['frames'] if frame['pict_type'] == 'I']
     if len(video_frames) == 0:
         return HttpResponse(f"No I-Frames were found using ffprobe on {video_filename}")
 
@@ -111,11 +111,11 @@ def group_of_of_pictures_video(request, video_filename, group_of_pictures_index)
     video_pathname = f"{str(settings.VIDEOS_STATIC_ROOT)}/{video_filename}"
     try:
         # Output returned by ffprobe as JSON for the specified file.
-        ffprobe_iframes_as_json = ffmpeg.probe(video_pathname, show_frames=None)
+        ffprobe_frames_as_json = ffmpeg.probe(video_pathname, show_frames=None)
     except ffmpeg.Error as e:
         return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
 
-    video_frames = [frame for frame in ffprobe_iframes_as_json['frames'] if frame['pict_type'] == 'I']
+    video_frames = [frame for frame in ffprobe_frames_as_json['frames'] if frame['pict_type'] == 'I']
     number_of_video_frames = len(video_frames)
     if number_of_video_frames == 0:
         return HttpResponse(f"No I-Frames were found using ffprobe on {video_filename}")
