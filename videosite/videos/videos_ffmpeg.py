@@ -66,7 +66,7 @@ def trim(video_pathname, output_pathname, start_frame, end_frame) -> None:
       video_pathname: The pathname of the file on which ffprobe will operate.
       output_pathname: The new video file.
       start_frame: The first frame in the existing video that will be included in the new one.
-      start_frame: The last frame in the existing video that will be included in the new one.
+      end_frame: The last frame in the existing video that will be included in the new one.
 
     Raises:
       RuntimeError
