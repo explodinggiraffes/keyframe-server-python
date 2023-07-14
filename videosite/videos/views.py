@@ -9,7 +9,7 @@ from django.shortcuts import render
 
 import ffmpeg
 
-import videos.videos_ffmeg as videos_ffmeg
+import videos.videos_ffmpeg as videos_ffmpeg
 
 
 def index(request):
@@ -22,7 +22,7 @@ def video_elements(request, video_filename):
     """
     video_pathname = f"{str(settings.VIDEOS_STATIC_ROOT)}/{video_filename}"
     try:
-        video_frames = videos_ffmeg.iframes(video_pathname)
+        video_frames = videos_ffmpeg.iframes(video_pathname)
     except ffmpeg.Error as e:
         return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
 
@@ -35,13 +35,13 @@ def video_elements(request, video_filename):
     group_of_pictures_index = 0
     for frame in video_frames:
         try:
-            frame_span = videos_ffmeg.group_of_pictures_frame_span(video_frames, group_of_pictures_index, video_pathname)
+            frame_span = videos_ffmpeg.group_of_pictures_frame_span(video_frames, group_of_pictures_index, video_pathname)
         except ffmpeg.Error as e:
             return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
 
         output_pathname = f"{str(settings.VIDEOS_MEDIA_ROOT)}/video_elements.{time.time()}.{video_filename}"
         try:
-            videos_ffmeg.trim(video_pathname, output_pathname, frame_span['start_frame'], frame_span['end_frame'])
+            videos_ffmpeg.trim(video_pathname, output_pathname, frame_span['start_frame'], frame_span['end_frame'])
         except ffmpeg.Error as e:
             return HttpResponse(f"An error occurred while using ffmpeg on {video_filename}:<br>{e.stderr}")
 
@@ -79,7 +79,7 @@ def video_iframe_detail(request, video_filename):
     """Returns JSON-encoded data showing details of all the I-frames in a video."""
     video_pathname = f"{str(settings.VIDEOS_STATIC_ROOT)}/{video_filename}"
     try:
-        video_frames = videos_ffmeg.iframes(video_pathname)
+        video_frames = videos_ffmpeg.iframes(video_pathname)
     except ffmpeg.Error as e:
         return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
     if len(video_frames) == 0:
@@ -92,7 +92,7 @@ def group_of_of_pictures_video(request, video_filename, group_of_pictures_index)
     """Returns an MP4 file containing the video data for the group of pictures requested (zero-indexed)."""
     video_pathname = f"{str(settings.VIDEOS_STATIC_ROOT)}/{video_filename}"
     try:
-        video_frames = videos_ffmeg.iframes(video_pathname)
+        video_frames = videos_ffmpeg.iframes(video_pathname)
     except ffmpeg.Error as e:
         return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
 
@@ -103,13 +103,13 @@ def group_of_of_pictures_video(request, video_filename, group_of_pictures_index)
         return HttpResponse(f"Requested group-of-pictures index {group_of_pictures_index} doesn't exist in  {video_filename}")
 
     try:
-        frame_span = videos_ffmeg.group_of_pictures_frame_span(video_frames, group_of_pictures_index, video_pathname)
+        frame_span = videos_ffmpeg.group_of_pictures_frame_span(video_frames, group_of_pictures_index, video_pathname)
     except ffmpeg.Error as e:
         return HttpResponse(f"An error occurred while using ffprobe on {video_filename}:<br>{e.stderr}")
 
     output_pathname = f"{str(settings.VIDEOS_MEDIA_ROOT)}/group_of_of_pictures_video.{time.time()}.{video_filename}"
     try:
-        videos_ffmeg.trim(video_pathname, output_pathname, frame_span['start_frame'], frame_span['end_frame'])
+        videos_ffmpeg.trim(video_pathname, output_pathname, frame_span['start_frame'], frame_span['end_frame'])
     except ffmpeg.Error as e:
         return HttpResponse(f"An error occurred while using ffmpeg on {video_filename}:<br>{e.stderr}")
 
