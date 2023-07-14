@@ -3,7 +3,10 @@
 .idea
 
 ## Cached Python compiled bytecode files.
+videosite/videos/__pycache__/
 videosite/videos/__pycache__/*.pyc
+videosite/videosite/__pycache__/
+videosite/videosite/videos/__pycache__/
 videosite/videosite/videos/__pycache__/*.pyc
 
 ## Temporary MP4 files created while using the videos app.
