@@ -19,7 +19,7 @@ def copy(video_pathname, output_pathname, timestamp_begin, frame_span) -> None:
       video_pathname: The pathname of the file on which ffprobe will operate.
       output_pathname: The new video file.
       timestamp_begin: The timestamp used for "input seeking" (finding where we'll start copying the original file).
-      frame_span: Used to determine the number of frames to be copied.
+      frame_span: Determines the number of frames to be copied.
     """
     start_frame = frame_span['start_frame']
     end_frame = frame_span['end_frame']
@@ -84,4 +84,5 @@ def iframes(video_pathname) -> list[str: Any]:
     except ffmpeg.Error as e:
       raise RuntimeError(e.stderr)
     iframes = [frame for frame in ffprobe_all_frames['frames'] if frame['pict_type'] == 'I']
+
     return iframes
