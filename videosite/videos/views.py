@@ -44,7 +44,7 @@ def video_elements(request, video_filename):
             return HttpResponse(f"An error occurred getting I-Frames for {video_filename}:<br>{repr(e)}")
 
         output_pathname = f"{str(settings.VIDEOS_MEDIA_ROOT)}/video_elements.{time.time()}.{video_filename}"
-        videos_ffmpeg.trim(video_pathname, output_pathname, timestamp_begin, frame_span)
+        videos_ffmpeg.copy(video_pathname, output_pathname, timestamp_begin, frame_span)
 
         display_index = group_of_pictures_index + 1
         display_group_begin = True if display_index % 6 == 1 else False
@@ -105,7 +105,7 @@ def group_of_of_pictures_video(request, video_filename, group_of_pictures_index)
         return HttpResponse(f"An error occurred getting I-Frames for {video_filename}:<br>{repr(e)}")
 
     output_pathname = f"{str(settings.VIDEOS_MEDIA_ROOT)}/group_of_of_pictures_video.{time.time()}.{video_filename}"
-    videos_ffmpeg.trim(video_pathname, output_pathname, timestamp_begin, frame_span)
+    videos_ffmpeg.copy(video_pathname, output_pathname, timestamp_begin, frame_span)
 
     context = {
         'group_of_pictures_index': group_of_pictures_index,
