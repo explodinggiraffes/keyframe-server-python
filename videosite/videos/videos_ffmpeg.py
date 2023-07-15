@@ -7,18 +7,19 @@ import ffmpeg
 
 
 def copy(video_pathname, output_pathname, timestamp_begin, frame_span) -> None:
-    # TODO: Fix this docstring.
-    """Trims the specified video file, using the supplied beginning and ending frame numbers. A new file is created,
-    using the name of the supplied output file pathname.
+    """Copies part of the specified video file without re-encoding. The output is written to a new file, using the name
+    of the supplied output file pathname.
+
+    If a file with the supplied output pathname already exists it will be overwitten.
 
     Implementation Note: Couldn't get the copy option working properly with the ffmpeg library, so calling ffmpeg
     directly as a subprocess.
 
-    If a file with the supplied output pathname already exists it will be overwitten.
-
     Args:
       video_pathname: The pathname of the file on which ffprobe will operate.
       output_pathname: The new video file.
+      timestamp_begin: The timestamp used for "input seeking" (finding where we'll start copying the original file).
+      frame_span: Used to determine the number of frames to be copied.
     """
     start_frame = frame_span['start_frame']
     end_frame = frame_span['end_frame']
