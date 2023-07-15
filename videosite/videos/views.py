@@ -6,7 +6,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render
-
+from django.core.exceptions import *
 import videos.videos_ffmpeg as videos_ffmpeg
 
 
@@ -32,22 +32,19 @@ def video_elements(request, video_filename):
     group_of_pictures_list = []
     group_of_pictures_index = 0
     for frame in video_frames:
+        timestamp_begin = video_frames[group_of_pictures_index]['best_effort_timestamp_time']
+        if group_of_pictures_index < (number_of_video_frames - 1):
+            timestamp_end = video_frames[group_of_pictures_index + 1]['best_effort_timestamp_time']
+        else:
+            timestamp_end = "end"
+
         try:
             frame_span = videos_ffmpeg.group_of_pictures_frame_span(video_frames, group_of_pictures_index, video_pathname)
         except RuntimeError as e:
             return HttpResponse(f"An error occurred getting I-Frames for {video_filename}:<br>{repr(e)}")
 
         output_pathname = f"{str(settings.VIDEOS_MEDIA_ROOT)}/video_elements.{time.time()}.{video_filename}"
-        try:
-            videos_ffmpeg.trim(video_pathname, output_pathname, frame_span['start_frame'], frame_span['end_frame'])
-        except RuntimeError as e:
-            return HttpResponse(f"An error occurred while processing {video_filename}:<br>{repr(e)}")
-
-        timestamp_begin = video_frames[group_of_pictures_index]['best_effort_timestamp_time']
-        if group_of_pictures_index < (number_of_video_frames - 1):
-            timestamp_end = video_frames[group_of_pictures_index + 1]['best_effort_timestamp_time']
-        else:
-            timestamp_end = "end"
+        videos_ffmpeg.trim(video_pathname, output_pathname, timestamp_begin, frame_span)
 
         display_index = group_of_pictures_index + 1
         display_group_begin = True if display_index % 6 == 1 else False
@@ -100,16 +97,15 @@ def group_of_of_pictures_video(request, video_filename, group_of_pictures_index)
     elif group_of_pictures_index >= number_of_video_frames:
         return HttpResponse(f"Requested group-of-pictures index {group_of_pictures_index} doesn't exist in  {video_filename}")
 
+    timestamp_begin = video_frames[group_of_pictures_index]['best_effort_timestamp_time']
+
     try:
         frame_span = videos_ffmpeg.group_of_pictures_frame_span(video_frames, group_of_pictures_index, video_pathname)
     except RuntimeError as e:
         return HttpResponse(f"An error occurred getting I-Frames for {video_filename}:<br>{repr(e)}")
 
     output_pathname = f"{str(settings.VIDEOS_MEDIA_ROOT)}/group_of_of_pictures_video.{time.time()}.{video_filename}"
-    try:
-        videos_ffmpeg.trim(video_pathname, output_pathname, frame_span['start_frame'], frame_span['end_frame'])
-    except RuntimeError as e:
-        return HttpResponse(f"An error occurred while processing {video_filename}:<br>{repr(e)}")
+    videos_ffmpeg.trim(video_pathname, output_pathname, timestamp_begin, frame_span)
 
     context = {
         'group_of_pictures_index': group_of_pictures_index,

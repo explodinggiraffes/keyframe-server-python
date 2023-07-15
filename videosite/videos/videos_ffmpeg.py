@@ -1,6 +1,7 @@
 """Utility functions for working with ffmpeg and ffprobe."""
 
 from typing import Any
+import subprocess
 
 import ffmpeg
 
@@ -24,11 +25,11 @@ def group_of_pictures_frame_span(iframes, group_of_pictures_index, video_pathnam
         end_frame = iframes[group_of_pictures_index + 1]['coded_picture_number'] - 1
     else:
         try:
-          ffprobe_frames_nbr_as_json = ffmpeg.probe(video_pathname, count_frames=None, show_entries="stream=nb_read_frames")
+          ffprobe_frames_nbr = ffmpeg.probe(video_pathname, count_frames=None, show_entries="stream=nb_read_frames")
         except ffmpeg.Error as e:
           raise RuntimeError(e.stderr)
-        streams = ffprobe_frames_nbr_as_json['streams']
-        end_frame = streams[0]['nb_read_frames']
+        streams = ffprobe_frames_nbr['streams']
+        end_frame = int(streams[0]['nb_read_frames'])
 
     frame_span = {
         'start_frame': start_frame,
@@ -56,29 +57,29 @@ def iframes(video_pathname) -> list[str: Any]:
     iframes = [frame for frame in ffprobe_all_frames['frames'] if frame['pict_type'] == 'I']
     return iframes
 
-def trim(video_pathname, output_pathname, start_frame, end_frame) -> None:
+def trim(video_pathname, output_pathname, timestamp_begin, frame_span) -> None:
     """Trims the specified video file, using the supplied beginning and ending frame numbers. A new file is created,
     using the name of the supplied output file pathname.
+
+    Implementation Note: Couldn't get the copy option working properly with the ffmpeg library, so calling ffmpeg
+    directly as a subprocess.
 
     If a file with the supplied output pathname already exists it will be overwitten.
 
     Args:
       video_pathname: The pathname of the file on which ffprobe will operate.
       output_pathname: The new video file.
-      start_frame: The first frame in the existing video that will be included in the new one.
-      end_frame: The last frame in the existing video that will be included in the new one.
-
-    Raises:
-      RuntimeError
     """
-    try:
-      (
-          ffmpeg
-          .input(video_pathname)
-          .trim(start_frame=start_frame, end_frame=end_frame)
-          .output(output_pathname)
-          .overwrite_output()
-          .run()
-      )
-    except ffmpeg.Error as e:
-      raise RuntimeError(e.stderr)
+    start_frame = frame_span['start_frame']
+    end_frame = frame_span['end_frame']
+    number_of_frames = end_frame - start_frame
+
+    # Build the ffmpeg command.
+    # Note the --ss argument MUST come before the -i argument to perform input seeking. Input seeking is fast; ffmpeg
+    # will see the nearest I-Frame to the beginning timestamp. Since we derived this timestamp from an I-Frame, it
+    # should be spot-on. Input seeking seems to create more accurate copies (slices) than output seeking (where -ss is
+    # specified after -i).
+    # Short article explaining input / output seeking:
+    # https://ottverse.com/trim-cut-video-using-start-endtime-reencoding-ffmpeg/
+    command = f"ffmpeg -hide_banner -loglevel error -ss {timestamp_begin} -i {video_pathname} -frames:v {number_of_frames} -c copy {output_pathname}"
+    subprocess.call(command, shell=True)
