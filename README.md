@@ -7,7 +7,7 @@ and [group-of-pictures](https://en.wikipedia.org/wiki/Group_of_pictures) from a 
 - Display a single group-of-pictures as a video
 - Display all group-of-pictures as a grid of videos
 
-Information on the environment, running Video Keyframe Server, and available endpoints / functionality can be found at the end of this README.
+Information on the environment, running Video Keyframe Server, and available endpoints / functionality can be found at the end of this README in the "Usage" section.
 
 # Overview
 
@@ -83,6 +83,37 @@ While not a perfomance issue per se, `static\videos\media` currently needs to be
 
 ## Running
 
+Note: Only tested on my Windows 10 development machine.
+
+`cd /parent/directory/to/VideoKeyframeServer`
+
+Activate the Python virtual environment:
+Windows:
+`VideoKeyframeServer\Scripts\activate.bat`
+macOS and Linux:
+`source VideoKeyframeServer/bin/activate`
+
+Run the Django development server:
+`python manage.py runserver`
+
 ## Endpoints
 
+Endpoint returning an HTML page containing a grid of all the groups of pictures in playable video elements and their timestamps.
+Example:<br>
+http://127.0.0.1:8000/videos/CoolVideo.mp4/group-of-pictures
+
+Endpoint returning JSON-encoded data showing details of all the I-frames in a video. <br>
+Example:<br>
+http://127.0.0.1:8000/videos/CoolVideo.mp4/group-of-pictures.json
+
+Endpoint returning an MP4 file containing the video data for the group of pictures requested (zero-indexed). <br>
+Example:<br>
+http://127.0.0.1:8000/videos/CoolVideo.mp4/group-of-pictures/0
+
 ## Example output
+
+<img src="README-VideoKeyframeServer-screenshot-grid.png" width="938"/>
+
+<img src="README-VideoKeyframeServer-screenshot-json.png" width="938"/>
+
+<img src="README-VideoKeyframeServer-screenshot-gop.png" width="938"/>
