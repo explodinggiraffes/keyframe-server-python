@@ -1,3 +1,5 @@
+# Copyright 2023 John Koszarek
+
 """Utility functions for working with ffmpeg and ffprobe."""
 
 from typing import Any

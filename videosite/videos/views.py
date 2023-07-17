@@ -1,3 +1,5 @@
+# Copyright 2023 John Koszarek
+
 """Views accepting an HTTP request and returning an HTTP response.
 
     TODO:

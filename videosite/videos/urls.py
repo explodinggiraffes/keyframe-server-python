@@ -1,3 +1,5 @@
+# Copyright 2023 John Koszarek
+
 from django.urls import path
 
 from . import views
