@@ -77,7 +77,7 @@ The key performance issues are:
 Using Python to working with ffmpeg seems to be more-or-less industry standard (e.g., [Runway](https://runwayml.com/) "Magic Tools" seem to do this). However, using Node.js
 might make scaling up easier, as Node is built from the ground-up to handle requests asynchronously.
 
-While not a perfomance issue per se, `static\videos\media` currently needs to be manually cleaned up.
+While not a perfomance issue per se, `static/videos/media` currently needs to be manually cleaned up.
 
 # Usage
 
