@@ -26,7 +26,7 @@ From within the virtual environment, you can deactivate it by executing:
 deactivate
 
 
-* Running:
+** Running:
 
 cd VideoKeyframeServer/videosite
 python manage.py runserver
