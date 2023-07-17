@@ -20,8 +20,8 @@ Handles rendering to views as well as logic to create those views.
 As noted in that file's TODO, a future refactor should move that logic to a different module and/or classes.
 - `videos_ffmpeg` <br>
 Module wrapping the `ffmpeg` library, as well as calling `ffmpeg` directly as a subprocess. Currently called by the view.
-- `templates/videos/*html`
-Django templates used by the view. <br>
+- `templates/videos/*html` <br>
+Django templates used by the view.
 - `urls.py` <br>
 Maps endpoints to the view.
 - `videosite/videosite/settings.py` <br>
