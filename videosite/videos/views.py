@@ -1,4 +1,10 @@
-"""Views accepting an HTTP request and returning an HTTP response."""
+"""Views accepting an HTTP request and returning an HTTP response.
+
+    TODO:
+    This view implementation is starting to get pretty "chucky", even with ffprobe and ffmpeg functionality moved
+    to the videos_ffmpeg module. The next refactor should move all business logic out of this file and into its own
+    module, or even further refactored into class(es).
+"""
 
 import time
 
