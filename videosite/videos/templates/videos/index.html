@@ -5,6 +5,24 @@
     <title>Video Keyframe Server - Welcome</title>
   </head>
   <body>
-    <p>This will be a page explaining how to use the Video Keyframe Server.</p>
+    <p>
+      <b>Video Keyframe Server usage:</b>
+    </p>
+    <p>
+      Endpoint returning an HTML page containing a grid of all the groups of pictures in playable video elements and their timestamps. <br>
+      Example: <br>
+      http://127.0.0.1:8000/videos/CoolVideo.mp4/group-of-pictures
+    <p>
+    <p>
+      Endpoint returning JSON-encoded data showing details of all the I-frames in a video. <br>
+      Example: <br>
+      http://127.0.0.1:8000/videos/CoolVideo.mp4/group-of-pictures.json
+    </p>
+    <p>
+    </p>
+      Endpoint returning an MP4 file containing the video data for the group of pictures requested (zero-indexed). <br>
+      Example: <br>
+      http://127.0.0.1:8000/videos/CoolVideo.mp4/group-of-pictures/0
+    </p>
   </body>
 </html>
