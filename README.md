@@ -49,7 +49,7 @@ re-encoding the output.
 
 ### Responding to future feature requests
 
-As noted in both this README and view.py itself... the view has gotten very "chunky". It has logic for creating the views that should be moved to a separate module and/or
+As noted in both this README and `view.py` itself... the view has gotten very "chunky". It has logic for creating the views that should be moved to a separate module and/or
 classes. This refactor should be done _first_, before any new features are added.
 
 After the above refactor is complete, follow this general pattern:
