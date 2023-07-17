@@ -30,9 +30,9 @@ Informs Django of the "videos" app (`INSTALLED_APPS`). Also defines settings use
 Adds the "videos" app and defines a custom 404 page (only works in production).
 
 ## Directories
-- `static\videos` <br>
+- `static/videos` <br>
 MP4 file(s) used by Video Keyframe Server, such as "CoolVideo.mp4"
-- `static\videos\media` <br>
+- `static/videos/media` <br>
 Temporary MP4 files created by Video Keyframe Server when endpoints are accessed. Currently needs to be manually cleaned up.
 
 ## Implementation notes
