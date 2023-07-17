@@ -2,6 +2,8 @@ NOTE: These steps are only required if you are creating VideoKeyframeServer from
 
 ** Creating the environment
 
+ffmpeg needs to be installed and in your PATH.
+
 cd /parent/directory/to/VideoKeyframeServer
 python -m venv VideoKeyframeServer
 

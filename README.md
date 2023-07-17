@@ -83,17 +83,19 @@ While not a perfomance issue per se, `static\videos\media` currently needs to be
 
 ## Running
 
-Note: Only tested on my Windows 10 development machine.
+Notes:
+- ffmpeg needs to be installed and in your PATH
+- Video Keyframe Server has only tested on my Windows 10 development machine
 
 `cd /parent/directory/to/VideoKeyframeServer`
 
-Activate the Python virtual environment:
-Windows:
-`VideoKeyframeServer\Scripts\activate.bat`
-macOS and Linux:
-`source VideoKeyframeServer/bin/activate`
+Activate the Python virtual environment: <br>
+Windows: <br>
+`VideoKeyframeServer\Scripts\activate.bat` <br>
+macOS and Linux: <br>
+`source VideoKeyframeServer/bin/activate` <br>
 
-Run the Django development server:
+Run the Django development server: <br>
 `python manage.py runserver`
 
 ## Endpoints
