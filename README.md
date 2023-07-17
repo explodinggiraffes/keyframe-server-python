@@ -112,14 +112,14 @@ http://127.0.0.1:8000/videos/CoolVideo.mp4/group-of-pictures/0
 
 ## Example output
 
-### Endpoint returning an HTML page containing a grid of all the groups of pictures in playable video elements and their timestamps
+Endpoint returning an HTML page containing a grid of all the groups of pictures in playable video elements and their timestamps. <br>
 
 <img src="README-VideoKeyframeServer-screenshot-grid.png" width="938"/>
 
-### Endpoint returning JSON-encoded data showing details of all the I-frames in a video
+Endpoint returning JSON-encoded data showing details of all the I-frames in a video. <br>
 
 <img src="README-VideoKeyframeServer-screenshot-json.png" width="938"/>
 
-### Endpoint returning an MP4 file containing the video data for the group of pictures requested (zero-indexed)
+Endpoint returning an MP4 file containing the video data for the group of pictures requested (zero-indexed). <br>
 
 <img src="README-VideoKeyframeServer-screenshot-gop.png" width="938"/>
